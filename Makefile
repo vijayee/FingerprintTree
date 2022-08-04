@@ -3,8 +3,8 @@ build:
 test: build
 	mkdir -p build/test
 test/FingerprintTree: test FingerprintTree/test/*.pony
-	stable fetch
-	stable env ponyc FingerprintTree/test -o build/test --debug
+	corral fetch
+	corral run -- ponyc FingerprintTree/test -o build/test --debug
 test/execute: test/FingerprintTree
 	./build/test/test
 clean:
