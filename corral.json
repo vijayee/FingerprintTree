@@ -6,7 +6,7 @@
     "description": "Fingerprint Tree: An Alternative to Bloom Filters and Cuckoo Filters",
     "homepage": "https://github.com/vijayee/FingerprintTree",
     "license": "GPLv3",
-    "version": "0.0.3",
+    "version": "0.0.1",
     "name": "FingerprintTree"
   },
   "deps": [
