@@ -109,6 +109,11 @@ class iso _TestTree is UnitTest
       end
     end
 
+    let tree2: FingerprintTree = tree.copy()
+    for key in fixtures.values() do
+      t.assert_true(tree2.contains(key))
+    end
+
     for key in fixtures.values() do
       match tree.remove(key)
         | Removed =>

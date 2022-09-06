@@ -1,3 +1,5 @@
+use @ponyint_hash_block[USize](ptr: Pointer[None] tag, size: USize)
+use @ponyint_hash_block64[U64](ptr: Pointer[None] tag, size: USize)
 use "Murmur3"
 use "collections"
 
@@ -7,37 +9,11 @@ class val Fingerprint
   new val create (data': Array[U8] val, size: USize) ? =>
     data = recover val Murmur32(data')?.slice(0, size) end
 
-  fun hash (): USize =>
-    var hash': USize = 0
-    var first: Bool = true
-    try
-      for i in Range(0, data.size()) do
-        if i >= 8 then
-          break
-        end
-        if not first then
-          hash' = hash' << 8
-        end
-        hash' = hash' or (data(i)?.usize() and 0xFF)
-      end
-    end
-    hash'
+  fun hash(): USize =>
+    @ponyint_hash_block(data.cpointer(), data.size())
 
-  fun hash64 (): U64 =>
-    var hash': U64 = 0
-    var first: Bool = true
-    try
-      for i in Range(0, data.size()) do
-        if i >= 8 then
-          break
-        end
-        if not first then
-          hash' = hash' << 8
-        end
-        hash' = hash' or (data(i)?.u64() and 0xFF)
-      end
-    end
-    hash'
+  fun hash64(): U64 =>
+     @ponyint_hash_block64(data.cpointer(), data.size())
 
   fun box eq (that: box->Fingerprint) : Bool =>
     try

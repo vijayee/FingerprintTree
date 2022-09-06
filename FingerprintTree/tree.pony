@@ -18,6 +18,10 @@ class FingerprintTree
     _tree = Tree(bucketSize)
     _fpSize = fpSize
 
+  new _duplicate (fpSize: USize, tree: Tree) =>
+    _tree = tree
+    _fpSize = fpSize
+
   fun ref add(key: Array[U8] val) : Status =>
     try
       _tree.add(Fingerprint(key, _fpSize)?)
@@ -32,7 +36,7 @@ class FingerprintTree
       Failed
     end
 
-  fun ref contains (key: Array[U8] val): Bool =>
+  fun contains (key: Array[U8] val): Bool =>
     try
       _tree.contains(Fingerprint(key, _fpSize)?)
     else
@@ -40,6 +44,11 @@ class FingerprintTree
     end
   fun ref size (): USize =>
     _tree.size()
+
+  fun copy() : FingerprintTree iso^ =>
+    let tree = _tree.copy()
+    recover FingerprintTree._duplicate(_fpSize, consume tree) end
+
 class Tree
   var _bucket: (Fingerprints | None)
   var _left: (Tree | None)
@@ -53,6 +62,12 @@ class Tree
       else
         _bucket = bucket'
     end
+    _left = left'
+    _right = right'
+    _bucketSize = bucketSize
+
+  new _duplicate(bucketSize: USize, bucket': (Fingerprints |  None) = None, left': (Tree | None) = None, right': (Tree | None) = None) =>
+    _bucket = bucket'
     _left = left'
     _right = right'
     _bucketSize = bucketSize
@@ -166,6 +181,25 @@ class Tree
         _bucket = None
         _left = left
         _right = right
+    end
+
+  fun copy(): Tree iso^ =>
+    match _bucket
+      | None => // this is an internal Node
+        match (_right, _left)
+        | (let right: this->Tree, let left : this->Tree) =>
+            let right' = right.copy()
+            let left' = left.copy()
+            recover Tree._duplicate(_bucketSize, None, consume left', consume right') end
+        else
+          recover Tree(_bucketSize) end
+        end
+      | let bucket': this->Fingerprints =>
+        let newBucket: Fingerprints iso = recover Fingerprints(_bucketSize + 1) end
+        for fp in bucket'.values() do
+          newBucket(fp) = fp
+        end
+        recover Tree._duplicate(_bucketSize, consume newBucket) end
     end
 
   primitive BucketFull
