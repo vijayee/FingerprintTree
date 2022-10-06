@@ -7,7 +7,7 @@ primitive GetBit
     end
     let byte: USize = index / 8 // which byte in the array
     let byteIndex: USize = index % 8 // index of the bit in the bytes
-    ((data(byte)? and (1 << (byteIndex.u8() -1))) != 0)
+    ((data(byte)? and (1 << byteIndex.u8())) != 0)
 
 type Fingerprints is Map[Fingerprint val, Fingerprint val]
 
@@ -114,7 +114,11 @@ class Tree
             _split(index)
           end
         end
-        Added
+        if inserted then
+          Added
+        else
+          Duplicate
+        end
     end
 
   fun ref remove(fp: Fingerprint val, index: USize = 0): Status =>

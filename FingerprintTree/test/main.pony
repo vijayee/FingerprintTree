@@ -33,8 +33,8 @@ class iso _TestGetBit is UnitTest
       t.assert_false(GetBit(arr, 0)?)
       t.assert_false(GetBit(arr, 1)?)
       t.assert_false(GetBit(arr, 2)?)
-      t.assert_false(GetBit(arr, 3)?)
-      t.assert_true(GetBit(arr, 4)?)
+      t.assert_true(GetBit(arr, 3)?)
+      t.assert_false(GetBit(arr, 4)?)      
       t.assert_false(GetBit(arr, 5)?)
       t.assert_false(GetBit(arr, 6)?)
       t.assert_false(GetBit(arr, 7)?)
@@ -103,6 +103,7 @@ class iso _TestTree is UnitTest
           t.log("Failed to insert")
           t.assert_false(tree.contains(key))
         | Duplicate =>
+          t.fail("duplicate")
           t.log("This is a duplicate key ")
         | BucketFull =>
           t.log("The bucket is full")
